@@ -149,6 +149,9 @@ def from_special(uri, handle):
     content_type = handle.headers.type
     data = handle.read()
 
+    if content_type.startswith('text/'):
+        data = data.decode('utf-8', 'ignore')
+
     tiddler = Tiddler(title)
     tiddler.type = content_type
     tiddler.text = data
