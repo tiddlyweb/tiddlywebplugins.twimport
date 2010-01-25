@@ -1,7 +1,4 @@
-
 TiddlyWiki import code for TiddyWeb collected in one place.
 
-The hoped for end result is some dryness between wimporter,
-tiddlywebwik and instancer.
-
-
+This plugin provides common functionality for tiddlywebwiki, instancer
+and wimporter.
