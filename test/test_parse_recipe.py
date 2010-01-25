@@ -20,10 +20,12 @@ def test_parse_recipe_results():
 
     filenames = [os.path.basename(url) for url in urls]
 
-    assert len(filenames) == 5
+    assert len(filenames) == 7
 
     assert 'aplugin.js' in filenames
+    assert 'bplugin.js' in filenames
     assert 'Welcome.tid' in filenames
     assert 'Greetings.tiddler' in filenames
+    assert 'Empty.tiddler' in filenames
     assert 'Hello.tid' in filenames
     assert 'hole.js' in filenames

@@ -1,5 +1,9 @@
 tiddler: plugins/aplugin.js
+tiddler: plugins/bplugin.js
 tiddler: Welcome.tid
+# here we have a commend followed by blank line
+
 tiddler: Greetings.tiddler
+tiddler: Empty.tiddler
 tiddler: ../beta/Hello.tid
 recipe: ../beta/buried/short.recipe

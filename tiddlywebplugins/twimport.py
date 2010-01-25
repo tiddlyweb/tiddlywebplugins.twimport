@@ -283,11 +283,7 @@ def _get_tiddler_from_div(node):
     Create a Tiddler from an HTML div element.
     """
     tiddler = Tiddler(node.getAttribute('title'))
-    try:
-        tiddler.text = _html_decode(_get_text(node.getElementsByTagName('pre')))
-    except IndexError:
-        # there are no contents in the tiddler
-        tiddler.text = ''
+    tiddler.text = _html_decode(_get_text(node.getElementsByTagName('pre')))
 
     for attr, value in node.attributes.items():
         data = value

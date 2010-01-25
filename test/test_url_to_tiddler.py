@@ -4,6 +4,7 @@ test given a path or url to tiddler get a Tiddler.
 
 SAMPLE_PLUGIN = 'test/samples/beta/buried/hole.js'
 SAMPLE_META_PLUGIN = 'test/samples/alpha/plugins/aplugin.js'
+SAMPLE_META_NOTITLE_PLUGIN = 'test/samples/alpha/plugins/bplugin.js'
 SAMPLE_TID = 'test/samples/alpha/Welcome.tid'
 SAMPLE_TIDDLER = 'test/samples/alpha/Greetings.tiddler'
 SAMPLE_CSS = 'test/samples/tiddlyweb.css'
@@ -23,6 +24,12 @@ def test_meta_plugin():
     tiddler = url_to_tiddler(SAMPLE_META_PLUGIN)
 
     assert tiddler.title == 'aplugin'
+    assert 'excludeLists' in tiddler.tags
+
+def test_meta_notitle_plugin():
+    tiddler = url_to_tiddler(SAMPLE_META_NOTITLE_PLUGIN)
+
+    assert tiddler.title == 'bplugin'
     assert 'excludeLists' in tiddler.tags
 
 def test_tid():
