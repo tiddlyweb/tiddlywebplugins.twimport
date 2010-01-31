@@ -3,6 +3,7 @@ Import tiddlers, Cook recipes, TiddlyWikis into TiddlyWeb.
 """
 
 import os
+import urllib
 import urllib2
 import urlparse
 
@@ -201,7 +202,7 @@ def _get_title_from_uri(uri):
     """
     title = uri.split("/")[-1]
     title = _strip_extension(title)
-    title = urllib2.unquote(title)
+    title = urllib.unquote(title)
     if not type(title) == unicode:
         title = unicode(title, "utf-8")
     return title
@@ -237,7 +238,7 @@ def _expand_recipe(content, url=''):
             scheme, _ = urllib2.splittype(target)
             if not scheme:
                 if not '%' in target:
-                    target = urllib2.quote(target)
+                    target = urllib.quote(target)
                 target = urlparse.urljoin(url, target)
             if target_type == 'recipe':
                 urls.extend(recipe_to_urls(target))
@@ -313,7 +314,7 @@ def _get_url_handle(url):
             handle = urllib2.urlopen(url)
         except urllib2.URLError:
             scheme, netloc, path, params, query, fragment = urlparse.urlparse(url)
-            path = urllib2.quote(path)
+            path = urllib.quote(path)
             newurl = urlparse.urlunparse((scheme, netloc, path, params, query, fragment))
             handle = urllib2.urlopen(newurl)
     except ValueError:
