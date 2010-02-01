@@ -102,15 +102,20 @@ def wiki_string_to_tiddlers(content):
     # doctype hooey. So we traverse 
     body = doc.getElementsByTagName('body')[0]
     body_divs = body.getElementsByTagName('div')
+    is_wiki = False
     for div in body_divs:
         if div.hasAttribute('id') and div.getAttribute('id') == 'storeArea':
             divs = div.getElementsByTagName('div')
+            is_wiki = True
             break
 
-    tiddlers = []
-    for tiddler_div in divs:
-        tiddlers.append(_get_tiddler_from_div(tiddler_div))
-    return tiddlers
+    if is_wiki:
+        tiddlers = []
+        for tiddler_div in divs:
+            tiddlers.append(_get_tiddler_from_div(tiddler_div))
+        return tiddlers
+    else:
+        raise ValueError('content not a tiddlywiki 2.x')
 
 
 def from_plugin(uri, handle):
