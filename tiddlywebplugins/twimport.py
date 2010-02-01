@@ -60,7 +60,7 @@ def recipe_to_urls(url):
     Provided a url or path to a recipe, explode the recipe to
     a list of URLs of tiddlers (of various types).
     """
-    url, handle = _get_url_handle(url)
+    url, handle = get_url_handle(url)
     return _expand_recipe(handle.read().decode('utf-8', 'replace'), url)
 
 
@@ -69,7 +69,7 @@ def url_to_tiddler(url):
     Given a url to a tiddlers of some form,
     return a Tiddler object.
     """
-    url, handle = _get_url_handle(url)
+    url, handle = get_url_handle(url)
 
     if url.endswith('.js'):
         tiddler = from_plugin(url, handle)
@@ -87,7 +87,7 @@ def wiki_to_tiddlers(url):
     """
     Retrieve a .wiki or .html and extract the contained tiddlers.
     """
-    url, handle = _get_url_handle(url)
+    url, handle = get_url_handle(url)
     return wiki_string_to_tiddlers(handle.read().decode('utf-8', 'replace'))
 
 
@@ -304,7 +304,7 @@ def _get_tiddler_from_div(node):
     return tiddler
 
 
-def _get_url_handle(url):
+def get_url_handle(url):
     """
     Open the url using urllib2.urlopen. If the url is a filepath
     transform it into a file url.
@@ -319,7 +319,7 @@ def _get_url_handle(url):
             handle = urllib2.urlopen(newurl)
     except ValueError:
         # If ValueError happens again we want it to raise
-        url = 'file:' + os.path.abspath(url)
+        url = 'file://' + os.path.abspath(url)
         handle = urllib2.urlopen(url)
     return url, handle
 
