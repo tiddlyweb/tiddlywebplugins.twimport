@@ -19,10 +19,11 @@ def test_parse_recipe_results():
     urls = recipe_to_urls(SAMPLE)
 
     assert 'http://svn.tiddlywiki.org/Trunk/core/shadows/ColorPalette.tiddler' in urls
+    assert 'http://svn.tiddlywiki.org/Trunk/core/shadows/ViewTemplate.tiddler' in urls
 
     filenames = [os.path.basename(url) for url in urls]
 
-    assert len(filenames) == 8
+    assert len(filenames) == 9
 
     assert 'aplugin.js' in filenames
     assert 'bplugin.js' in filenames
@@ -32,3 +33,4 @@ def test_parse_recipe_results():
     assert 'Hello.tid' in filenames
     assert 'hole.js' in filenames
     assert 'ColorPalette.tiddler' in filenames
+    assert 'ViewTemplate.tiddler' in filenames

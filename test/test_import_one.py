@@ -30,10 +30,10 @@ def test_import_one_recipe():
     import_one('testone', 'test/samples/alpha/index.html.recipe', store)
 
     bag = store.get(Bag('testone'))
-    assert len(bag.list_tiddlers()) == 17
+    assert len(bag.list_tiddlers()) == 18
 
 def test_import_one_tiddler():
     import_one('testone', 'test/samples/alpha/plugins/bplugin.js', store)
 
     bag = store.get(Bag('testone'))
-    assert len(bag.list_tiddlers()) == 17 # bplugin already in store
+    assert len(bag.list_tiddlers()) == 18 # bplugin already in store

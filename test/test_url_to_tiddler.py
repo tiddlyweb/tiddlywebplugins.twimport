@@ -9,6 +9,7 @@ SAMPLE_TID = 'test/samples/alpha/Welcome.tid'
 SAMPLE_TIDDLER = 'test/samples/alpha/Greetings.tiddler'
 SAMPLE_CSS = 'test/samples/tiddlyweb.css'
 SAMPLE_PNG = 'test/samples/peermore.png'
+SAMPLE_TW_ROOT = '$TW_ROOT/foo/bar/baz'
 
 
 from tiddlywebplugins.twimport import url_to_tiddler

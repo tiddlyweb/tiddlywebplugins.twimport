@@ -17,7 +17,10 @@ from tiddlywebplugins.utils import get_store
 
 ACCEPTED_RECIPE_TYPES = ['tiddler', 'plugin', 'recipe']
 ACCEPTED_TIDDLER_TYPES = ['js', 'tid', 'tiddler']
-COOK_VARIABLES = { 'TW_TRUNKDIR': 'http://svn.tiddlywiki.org/Trunk' }
+COOK_VARIABLES = {
+    'TW_TRUNKDIR': 'http://svn.tiddlywiki.org/Trunk',
+    'TW_ROOT': 'http://svn.tiddlywiki.org/Trunk'
+}
 
 
 def init(config):
@@ -100,7 +103,7 @@ def wiki_string_to_tiddlers(content):
     doc = parser.parse(content)
     # minidom will not provide working getElementById without
     # first having a valid document, which means some very specific
-    # doctype hooey. So we traverse 
+    # doctype hooey. So we traverse
     body = doc.getElementsByTagName('body')[0]
     body_divs = body.getElementsByTagName('div')
     is_wiki = False
