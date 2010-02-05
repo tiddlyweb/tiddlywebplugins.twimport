@@ -7,3 +7,5 @@ tiddler: Greetings.tiddler
 tiddler: Empty.tiddler
 tiddler: ../beta/Hello.tid
 recipe: ../beta/buried/short.recipe
+# the TW_TRUNKDIR references the TiddlyWiki.org subversion repository
+tiddler: $TW_TRUNKDIR/core/shadows/ColorPalette.tiddler

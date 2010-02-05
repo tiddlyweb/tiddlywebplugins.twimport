@@ -17,6 +17,7 @@ from tiddlywebplugins.utils import get_store
 
 ACCEPTED_RECIPE_TYPES = ['tiddler', 'plugin', 'recipe']
 ACCEPTED_TIDDLER_TYPES = ['js', 'tid', 'tiddler']
+COOK_VARIABLES = { 'TW_TRUNKDIR': 'http://svn.tiddlywiki.org/Trunk' }
 
 
 def init(config):
@@ -237,6 +238,9 @@ def _expand_recipe(content, url=''):
             if isinstance(target, unicode):
                 target = target.encode('utf-8')
             target = target.lstrip().rstrip()
+            # translate well-known variables
+            for name in COOK_VARIABLES:
+                target = target.replace("$"+name, COOK_VARIABLES[name])
             # Check to see if the target is a URL (has a scheme)
             # if not we want to join it to the current url before
             # carrying on.
