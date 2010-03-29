@@ -323,17 +323,21 @@ def get_url_handle(url):
     """
     try:
         try:
+            try:
+                handle = urllib2.urlopen(url)
+            except urllib2.URLError:
+                scheme, netloc, path, params, query, fragment = urlparse.urlparse(url)
+                path = urllib.quote(path)
+                newurl = urlparse.urlunparse((scheme, netloc, path, params, query, fragment))
+                handle = urllib2.urlopen(newurl)
+        except ValueError:
+            # If ValueError happens again we want it to raise
+            url = 'file://' + os.path.abspath(url)
             handle = urllib2.urlopen(url)
-        except urllib2.URLError:
-            scheme, netloc, path, params, query, fragment = urlparse.urlparse(url)
-            path = urllib.quote(path)
-            newurl = urlparse.urlunparse((scheme, netloc, path, params, query, fragment))
-            handle = urllib2.urlopen(newurl)
-    except ValueError:
-        # If ValueError happens again we want it to raise
-        url = 'file://' + os.path.abspath(url)
-        handle = urllib2.urlopen(url)
-    return url, handle
+        return url, handle
+    except urllib2.HTTPError, exc:
+        raise ValueError('%s: %s' % (exc, url))
+
 
 
 def _html_decode(text):
