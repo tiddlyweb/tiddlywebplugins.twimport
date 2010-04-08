@@ -325,7 +325,7 @@ def get_url_handle(url):
         try:
             try:
                 handle = urllib2.urlopen(url)
-            except urllib2.URLError:
+            except (urllib2.URLError, OSError):
                 scheme, netloc, path, params, query, fragment = urlparse.urlparse(url)
                 path = urllib.quote(path)
                 newurl = urlparse.urlunparse((scheme, netloc, path, params, query, fragment))
