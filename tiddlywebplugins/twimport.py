@@ -143,6 +143,7 @@ def from_plugin(uri, handle):
         title = default_title
     tiddler_meta = '\n'.join(line for line in meta_content.split('\n')
             if not line.startswith('title:')).rstrip()
+    tiddler_meta = 'type: text/javascript\n%s' % tiddler_meta
 
     plugin_content = handle.read().decode('utf-8', 'replace')
     tiddler_text = '%s\n\n%s' % (tiddler_meta, plugin_content)
