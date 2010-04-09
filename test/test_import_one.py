@@ -1,6 +1,7 @@
 
 from tiddlyweb.config import config
 from tiddlyweb.store import Store, NoBagError
+from tiddlyweb.model.tiddler import Tiddler
 from tiddlyweb.model.bag import Bag
 from tiddlywebplugins.twimport import import_one
 
@@ -37,3 +38,7 @@ def test_import_one_tiddler():
 
     bag = store.get(Bag('testone'))
     assert len(bag.list_tiddlers()) == 18 # bplugin already in store
+
+    tiddler = store.get(Tiddler('bplugin', 'testone'))
+    assert tiddler.type == 'text/javascript'
+    assert tiddler.text == "alert('i am here');"
