@@ -128,24 +128,24 @@ def from_plugin(uri, handle):
     If there is no .meta file, title and tags assume default values.
     """
     default_title = _get_title_from_uri(uri)
-    default_tags = "systemConfig"
+    default_tags = 'systemConfig'
 
-    meta_uri = "%s.meta" % uri
+    meta_uri = '%s.meta' % uri
     try:
         meta_content = _get_url(meta_uri)
     except (urllib2.HTTPError, urllib2.URLError, IOError, OSError):
-        meta_content = "title: %s\ntags: %s\n" % (default_title, default_tags)
+        meta_content = 'title: %s\ntags: %s\n' % (default_title, default_tags)
     try:
-        title = [line for line in meta_content.split("\n")
-                if line.startswith("title:")][0]
-        title = title.split(":", 1)[1].strip()
+        title = [line for line in meta_content.split('\n')
+                if line.startswith('title:')][0]
+        title = title.split(':', 1)[1].strip()
     except IndexError:
         title = default_title
-    tiddler_meta = "\n".join(line for line in meta_content.split("\n")
-            if not line.startswith("title:")).rstrip()
+    tiddler_meta = '\n'.join(line for line in meta_content.split('\n')
+            if not line.startswith('title:')).rstrip()
 
     plugin_content = handle.read().decode('utf-8', 'replace')
-    tiddler_text = "%s\n\n%s" % (tiddler_meta, plugin_content)
+    tiddler_text = '%s\n\n%s' % (tiddler_meta, plugin_content)
 
     return _from_text(title, tiddler_text)
 
@@ -209,11 +209,11 @@ def _get_title_from_uri(uri):
     Turn a uri of tiddler into the title of a tiddler,
     by looking at the final segment of the path.
     """
-    title = uri.split("/")[-1]
+    title = uri.split('/')[-1]
     title = _strip_extension(title)
     title = urllib.unquote(title)
     if not type(title) == unicode:
-        title = unicode(title, "utf-8")
+        title = unicode(title, 'utf-8')
     return title
 
 
@@ -243,7 +243,7 @@ def _expand_recipe(content, url=''):
             target = target.lstrip().rstrip()
             # translate well-known variables
             for name in COOK_VARIABLES:
-                target = target.replace("$"+name, COOK_VARIABLES[name])
+                target = target.replace('$%s' % name, COOK_VARIABLES[name])
             # Check to see if the target is a URL (has a scheme)
             # if not we want to join it to the current url before
             # carrying on.
@@ -265,7 +265,7 @@ def _get_url(url):
     Load a URL and decode it to unicode.
     """
     content = urllib2.urlopen(url).read().decode('utf-8', 'replace')
-    return content.replace("\r", "")
+    return content.replace('\r', '')
 
 
 def _from_text(title, content):
@@ -275,7 +275,7 @@ def _from_text(title, content):
     This corresponds to TiddlyWeb's text serialization of TiddlerS.
     """
     tiddler = Tiddler(title)
-    serializer = Serializer("text")
+    serializer = Serializer('text')
     serializer.object = tiddler
     serializer.from_string(content)
     return tiddler
