@@ -8,12 +8,15 @@ from tiddlywebplugins.twimport import import_one
 def setup_module(module):
     module.store = Store(config['server_store'][0],
             config['server_store'][1], {'tiddlyweb.config': config})
+    _cleanup(module.store)
+
+def _cleanup(store):
     bag = Bag('testone')
     try:
-        module.store.delete(bag)
+        store.delete(bag)
     except NoBagError:
         pass # first timer
-    module.store.put(bag)
+    store.put(bag)
 
 def test_import_one_wiki():
     import_one('testone', 'test/samples/tiddlers.wiki', store)
@@ -42,3 +45,21 @@ def test_import_one_tiddler():
     tiddler = store.get(Tiddler('bplugin', 'testone'))
     assert tiddler.type == 'text/javascript'
     assert tiddler.text == "alert('i am here');"
+
+def test_import_one_wiki_fragment():
+    _cleanup(store)
+    import_one('testone', 'test/samples/tiddlers.wiki#codeblocked', store)
+
+    bag = store.get(Bag('testone'))
+    tiddlers = bag.list_tiddlers()
+    assert len(tiddlers) == 1
+    assert tiddlers[0].title == 'codeblocked'
+
+def test_import_one_recipe_fragment():
+    _cleanup(store)
+    import_one('testone', 'test/samples/alpha/index.html.recipe#Greetings', store)
+
+    bag = store.get(Bag('testone'))
+    tiddlers = bag.list_tiddlers()
+    assert len(tiddlers) == 1
+    assert tiddlers[0].title == 'Greetings'

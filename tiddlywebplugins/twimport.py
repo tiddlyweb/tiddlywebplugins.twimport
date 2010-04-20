@@ -45,7 +45,13 @@ def import_list(bag_name, urls, store):
 
 
 def import_one(bag_name, url, store):
-    """Import one URI into bag."""
+    """Import one URI into bag. If the URI has a #fragment it
+    will be processed as a TiddlyWiki permaview fragment and
+    used to limit the tiddlers that get saved."""
+    fragments = []
+    if '#' in url:
+        url, fragment = url.split('#', 1)
+        fragments = _parse_fragment(fragment)
     if url.endswith('.recipe'):
         tiddlers = [url_to_tiddler(tiddler_url) for
                 tiddler_url in recipe_to_urls(url)]
@@ -55,6 +61,8 @@ def import_one(bag_name, url, store):
         tiddlers = [url_to_tiddler(url)]
 
     for tiddler in tiddlers:
+        if fragments and tiddler.title not in fragments:
+            continue
         tiddler.bag = bag_name
         store.put(tiddler)
 
@@ -347,3 +355,11 @@ def _html_decode(text):
     """
     return text.replace('&gt;', '>').replace('&lt;', '<').replace(
             '&amp;', '&').replace('&quot;', '"')
+
+
+def _parse_fragment(fragment):
+    """
+    Turn a TiddlyWiki permaview into a list of tiddlers.
+    """
+    fragment = urllib.unquote(fragment).decode('UTF-8')
+    return string_to_tags_list(fragment)
