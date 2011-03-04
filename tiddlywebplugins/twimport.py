@@ -57,7 +57,7 @@ def import_one(bag_name, url, store):
                 tiddler_url in recipe_to_urls(url)]
     elif url.endswith('.wiki') or url.endswith('.html'):
         tiddlers = wiki_to_tiddlers(url)
-    else: # we have a tiddler of some form
+    else:  # we have a tiddler of some form
         tiddlers = [url_to_tiddler(url)]
 
     for tiddler in tiddlers:
@@ -245,7 +245,7 @@ def _expand_recipe(content, url=''):
         try:
             target_type, target = line.split(':', 1)
         except ValueError:
-            continue # blank line in recipe
+            continue  # blank line in recipe
         if target_type in ACCEPTED_RECIPE_TYPES:
             if isinstance(target, unicode):
                 target = target.encode('utf-8')
@@ -266,7 +266,6 @@ def _expand_recipe(content, url=''):
             else:
                 urls.append(target)
     return urls
-
 
 
 def _get_url(url):
@@ -335,9 +334,11 @@ def get_url_handle(url):
             try:
                 handle = urllib2.urlopen(url)
             except (urllib2.URLError, OSError):
-                scheme, netloc, path, params, query, fragment = urlparse.urlparse(url)
+                (scheme, netloc, path, params, query,
+                        fragment) = urlparse.urlparse(url)
                 path = urllib.quote(path)
-                newurl = urlparse.urlunparse((scheme, netloc, path, params, query, fragment))
+                newurl = urlparse.urlunparse((scheme, netloc, path,
+                    params, query, fragment))
                 handle = urllib2.urlopen(newurl)
         except ValueError:
             # If ValueError happens again we want it to raise
@@ -346,7 +347,6 @@ def get_url_handle(url):
         return url, handle
     except urllib2.HTTPError, exc:
         raise ValueError('%s: %s' % (exc, url))
-
 
 
 def _html_decode(text):
