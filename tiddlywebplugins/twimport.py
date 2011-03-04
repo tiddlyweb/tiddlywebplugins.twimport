@@ -1,5 +1,12 @@
 """
 Import tiddlers, Cook recipes, TiddlyWikis into TiddlyWeb.
+
+If you wish to use the provided "twimport" twanager command
+you must add to twanager_plugins in tiddlywebconfig.py:
+
+    config = {
+        'twanager_plugins': ['tiddlywebplugins.twimport'],
+    }
 """
 
 import os
