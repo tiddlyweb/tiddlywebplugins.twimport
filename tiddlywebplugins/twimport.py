@@ -320,7 +320,7 @@ def _get_tiddler_from_div(node):
                 tiddler.fields[attr] = data
     if not node.attributes.get('modified', None) and tiddler.created:
         tiddler.modified = tiddler.created
-    tiddler.tags = string_to_tags_list(str(node.getAttribute('tags')))
+    tiddler.tags = string_to_tags_list(node.getAttribute('tags'))
 
     return tiddler
 

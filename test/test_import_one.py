@@ -22,25 +22,25 @@ def test_import_one_wiki():
     import_one('testone', 'test/samples/tiddlers.wiki', store)
 
     bag = store.get(Bag('testone'))
-    assert len(bag.list_tiddlers()) == 9
+    assert len(list(store.list_bag_tiddlers(bag))) == 9
 
 def test_import_one_html_wiki():
     import_one('testone', 'test/samples/tiddlers.html', store)
 
     bag = store.get(Bag('testone'))
-    assert len(bag.list_tiddlers()) == 9 # tiddlers overwritten
+    assert len(list(store.list_bag_tiddlers(bag))) == 9 # tiddlers overwritten
 
 def test_import_one_recipe():
     import_one('testone', 'test/samples/alpha/index.html.recipe', store)
 
     bag = store.get(Bag('testone'))
-    assert len(bag.list_tiddlers()) == 18
+    assert len(list(store.list_bag_tiddlers(bag))) == 18
 
 def test_import_one_tiddler():
     import_one('testone', 'test/samples/alpha/plugins/bplugin.js', store)
 
     bag = store.get(Bag('testone'))
-    assert len(bag.list_tiddlers()) == 18 # bplugin already in store
+    assert len(list(store.list_bag_tiddlers(bag))) == 18 # bplugin already in store
 
     tiddler = store.get(Tiddler('bplugin', 'testone'))
     assert tiddler.type == 'text/javascript'
@@ -51,7 +51,7 @@ def test_import_one_wiki_fragment():
     import_one('testone', 'test/samples/tiddlers.wiki#codeblocked', store)
 
     bag = store.get(Bag('testone'))
-    tiddlers = bag.list_tiddlers()
+    tiddlers = list(store.list_bag_tiddlers(bag))
     assert len(tiddlers) == 1
     assert tiddlers[0].title == 'codeblocked'
 
@@ -60,6 +60,6 @@ def test_import_one_recipe_fragment():
     import_one('testone', 'test/samples/alpha/index.html.recipe#Greetings', store)
 
     bag = store.get(Bag('testone'))
-    tiddlers = bag.list_tiddlers()
+    tiddlers = list(store.list_bag_tiddlers(bag))
     assert len(tiddlers) == 1
     assert tiddlers[0].title == 'Greetings'
