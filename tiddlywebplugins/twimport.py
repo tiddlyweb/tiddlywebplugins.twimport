@@ -95,7 +95,7 @@ def url_to_tiddler(url):
     elif url.endswith('.tid'):
         tiddler = from_tid(url, handle)
     elif url.endswith('.tiddler'):
-        tiddler = from_tiddler(url, handle)
+        tiddler = from_tiddler(handle)
     else:
         # binary tiddler
         tiddler = from_special(url, handle)
@@ -171,7 +171,6 @@ def from_special(uri, handle):
     This is borrowed from ben G's bimport.
     """
     title = _get_title_from_uri(uri)
-    # XXX: will mime type guessing always work?
     content_type = handle.headers.type
     data = handle.read()
 
@@ -199,7 +198,7 @@ def from_tid(uri, handle):
     return _from_text(title, handle.read().decode('utf-8', 'replace'))
 
 
-def from_tiddler(uri, handle):
+def from_tiddler(handle):
     """
     generates Tiddler from a Cook-style .tiddler file
     """
@@ -252,6 +251,9 @@ def _strip_extension(title):
 
 
 def _expand_recipe(content, url=''):
+    """
+    Expand a recipe into a list of usable URLs.
+    """
     urls = []
     for line in content.splitlines():
         line = line.lstrip().rstrip()
