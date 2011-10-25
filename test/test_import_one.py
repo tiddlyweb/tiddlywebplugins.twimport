@@ -63,3 +63,20 @@ def test_import_one_recipe_fragment():
     tiddlers = list(store.list_bag_tiddlers(bag))
     assert len(tiddlers) == 1
     assert tiddlers[0].title == 'Greetings'
+
+def test_import_one_js_meta():
+    import_one('testone', 'test/samples/alpha/plugins/metaplugin.js', store)
+
+    tiddler = store.get(Tiddler('metaplugin', 'testone'))
+
+    assert tiddler.title == 'metaplugin'
+    assert tiddler.tags == ['alpha', 'beta']
+
+def test_import_one_css_meta():
+    import_one('testone', 'test/samples/alpha/fnord.css', store)
+
+    tiddler = store.get(Tiddler('fnord.css', 'testone'))
+
+    assert tiddler.title == 'fnord.css'
+    assert tiddler.type == 'text/css'
+    assert tiddler.tags == ['alpha', 'beta']

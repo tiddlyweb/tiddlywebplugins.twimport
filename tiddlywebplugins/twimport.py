@@ -175,10 +175,16 @@ def from_special(uri, handle):
     content_type = handle.headers.type
     data = handle.read()
 
+    meta_uri = '%s.meta' % uri
+    try:
+        meta_content = _get_url(meta_uri)
+        tiddler = _from_text(title, meta_content + '\n\n')
+    except (urllib2.HTTPError, urllib2.URLError, IOError, OSError):
+        tiddler = Tiddler(title)
+
     if content_type.startswith('text/'):
         data = data.decode('utf-8', 'ignore')
 
-    tiddler = Tiddler(title)
     tiddler.type = content_type
     tiddler.text = data
 
