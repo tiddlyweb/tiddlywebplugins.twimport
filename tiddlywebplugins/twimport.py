@@ -1,5 +1,5 @@
 """
-Import tiddlers, Cook recipes, TiddlyWikis into TiddlyWeb.
+Import tiddlers, Cook recipes,  and TiddlyWikis into TiddlyWeb.
 
 If you wish to use the provided "twimport" twanager command
 you must add to twanager_plugins in tiddlywebconfig.py:
@@ -7,6 +7,36 @@ you must add to twanager_plugins in tiddlywebconfig.py:
     config = {
         'twanager_plugins': ['tiddlywebplugins.twimport'],
     }
+
+twimport has two primary purposes:
+
+    * Using the "twanager twimport" command to import content into a
+      running instance.
+    * Using the functionality in the plugin to help build instance
+      packages using tiddler content stored in many locations.
+
+This latter functionality relies on functionality provided by
+"tiddlywebplugins.ibuiler" and uses a modified form of the cook
+recipe format. Tiddlers may be referred to with either a local
+file path, or a remote URI and have an optional mime type:
+
+    tiddler: <uri> [mime type]
+
+The mime type option is provided to allow setting the mime type
+of the stored tiddler. If no type is provided the system will
+attempt to determine the mime based on HTTP response headers 
+or by guessing from the file extension.
+
+If a tiddler uri ends in '.js' it will be processed as a
+TiddlyWiki plugin (and, in the absence of a .meta file, get a
+systemConfig tag). To avoid this behavior set the mime type
+explicitly.
+
+When a tiddler is loaded, the code will look for a meta file
+in the same location. This optional file contains meta
+information about the tiddler, such as tags, modifier, and
+fields. The format is the same as the top section of a .tid
+file.
 """
 
 import os
@@ -47,15 +77,19 @@ def init(config):
 
 
 def import_list(bag_name, urls, store):
-    """Import a list of URIs into bag."""
+    """
+    Import a list of URIs into the named bag.
+    """
     for url in urls:
         import_one(bag_name, url, store)
 
 
 def import_one(bag_name, url, store):
-    """Import one URI into bag. If the URI has a #fragment it
+    """
+    Import one URI into bag. If the URI has a #fragment it
     will be processed as a TiddlyWiki permaview fragment and
-    used to limit the tiddlers that get saved."""
+    used to limit the tiddlers that get saved.
+    """
     fragments = []
     if '#' in url:
         url, fragment = url.split('#', 1)
@@ -77,7 +111,7 @@ def import_one(bag_name, url, store):
 
 def recipe_to_urls(url):
     """
-    Provided a url or path to a recipe, explode the recipe to
+    Provided a url or path to a Cook-style recipe, explode the recipe to
     a list of URLs of tiddlers (of various types).
     """
     url, handle = get_url_handle(url)
@@ -110,7 +144,8 @@ def url_to_tiddler(url):
 
 def wiki_to_tiddlers(url):
     """
-    Retrieve a .wiki or .html and extract the contained tiddlers.
+    Retrieve a .wiki or .html as a TiddlyWiki and extract the
+    contained tiddlers.
     """
     url, handle = get_url_handle(url)
     return wiki_string_to_tiddlers(handle.read().decode('utf-8', 'replace'))
@@ -118,7 +153,7 @@ def wiki_to_tiddlers(url):
 
 def wiki_string_to_tiddlers(content):
     """
-    Turn a string that is a wiki into tiddler.
+    Turn a string that is a TiddlyWiki into individual tiddlers.
     """
     parser = HTMLParser(tree=treebuilders.getTreeBuilder('dom'))
     doc = parser.parse(content)
@@ -145,7 +180,7 @@ def wiki_string_to_tiddlers(content):
 
 def from_plugin(uri, handle):
     """
-    generates Tiddler from a JavaScript (and accompanying meta) file
+    Generate a tiddler from a JavaScript (and accompanying meta) file
     If there is no .meta file, title and tags assume default values.
     """
     default_title = _get_title_from_uri(uri)
@@ -174,7 +209,12 @@ def from_plugin(uri, handle):
 
 def from_special(uri, handle, mime=None):
     """
-    This is borrowed from ben G's bimport.
+    Import a binary or pseudo binary tiddler. If a mime is provided,
+    set the type of the tiddler to that. Otherwise use the type determined
+    by the URL handler. If a meta file is present and has a type, it will
+    be used.
+
+    This code is inspired by @bengillies bimport.
     """
     title = _get_title_from_uri(uri)
     if mime:
@@ -203,7 +243,7 @@ def from_special(uri, handle, mime=None):
 
 def from_tid(uri, handle):
     """
-    generates Tiddler from a TiddlyWeb-style .tid file
+    generates a tiddler from a TiddlyWeb-style .tid file
     """
     title = _get_title_from_uri(uri)
     return _from_text(title, handle.read().decode('utf-8', 'replace'))
@@ -211,7 +251,7 @@ def from_tid(uri, handle):
 
 def from_tiddler(handle):
     """
-    generates Tiddler from a Cook-style .tiddler file
+    generates a tiddler from a Cook-style .tiddler file
     """
     content = handle.read().decode('utf-8', 'replace')
     content = _escape_brackets(content)
@@ -304,7 +344,7 @@ def _get_url(url):
 
 def _from_text(title, content):
     """
-    generates Tiddler from an RFC822-style string
+    Generates a tiddler from an RFC822-style string
 
     This corresponds to TiddlyWeb's text serialization of TiddlerS.
     """

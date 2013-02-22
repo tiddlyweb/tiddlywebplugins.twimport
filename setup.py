@@ -1,8 +1,8 @@
 AUTHOR = 'Chris Dent'
 AUTHOR_EMAIL = 'cdent@peermore.com'
 NAME = 'tiddlywebplugins.twimport'
-DESCRIPTION = 'Tools for importing tiddlywiki stuff into tiddlyweb'
-VERSION = '0.9.7'
+DESCRIPTION = 'TiddlyWiki and tiddler import tools for TiddyWeb'
+VERSION = '1.0.0'
 
 
 import os
