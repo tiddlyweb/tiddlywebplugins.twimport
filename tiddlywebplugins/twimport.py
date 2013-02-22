@@ -19,14 +19,15 @@ from html5lib import HTMLParser, treebuilders
 from tiddlyweb.model.tiddler import Tiddler, string_to_tags_list
 from tiddlyweb.serializer import Serializer
 from tiddlyweb.manage import make_command
+from tiddlyweb.util import pseudo_binary
 
 from tiddlywebplugins.utils import get_store
 
 ACCEPTED_RECIPE_TYPES = ['tiddler', 'plugin', 'recipe']
 ACCEPTED_TIDDLER_TYPES = ['js', 'tid', 'tiddler']
 COOK_VARIABLES = {
-    'TW_TRUNKDIR': 'http://svn.tiddlywiki.org/Trunk',
-    'TW_ROOT': 'http://svn.tiddlywiki.org/Trunk'
+        'TW_TRUNKDIR': 'https://raw.github.com/TiddlyWiki/tiddlywiki/master',
+        'TW_ROOT': 'https://raw.github.com/TiddlyWiki/tiddlywiki/master',
 }
 
 
@@ -88,9 +89,14 @@ def url_to_tiddler(url):
     Given a url to a tiddlers of some form,
     return a Tiddler object.
     """
+    mime_type = None
+    if ' ' in url:
+        uri, mime_type = url.split(' ', 1)
+        if '/' in mime_type:
+            url = uri
     url, handle = get_url_handle(url)
 
-    if url.endswith('.js'):
+    if url.endswith('.js') and not mime_type:
         tiddler = from_plugin(url, handle)
     elif url.endswith('.tid'):
         tiddler = from_tid(url, handle)
@@ -98,7 +104,7 @@ def url_to_tiddler(url):
         tiddler = from_tiddler(handle)
     else:
         # binary tiddler
-        tiddler = from_special(url, handle)
+        tiddler = from_special(url, handle, mime=mime_type)
     return tiddler
 
 
@@ -166,12 +172,15 @@ def from_plugin(uri, handle):
     return _from_text(title, tiddler_text)
 
 
-def from_special(uri, handle):
+def from_special(uri, handle, mime=None):
     """
     This is borrowed from ben G's bimport.
     """
     title = _get_title_from_uri(uri)
-    content_type = handle.headers.type
+    if mime:
+        content_type = mime
+    else:
+        content_type = handle.headers.type
     data = handle.read()
 
     meta_uri = '%s.meta' % uri
@@ -181,10 +190,12 @@ def from_special(uri, handle):
     except (urllib2.HTTPError, urllib2.URLError, IOError, OSError):
         tiddler = Tiddler(title)
 
-    if content_type.startswith('text/'):
+    if not tiddler.type and content_type:
+        tiddler.type = content_type
+
+    if pseudo_binary(content_type):
         data = data.decode('utf-8', 'ignore')
 
-    tiddler.type = content_type
     tiddler.text = data
 
     return tiddler

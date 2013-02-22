@@ -34,13 +34,13 @@ def test_import_one_recipe():
     import_one('testone', 'test/samples/alpha/index.html.recipe', store)
 
     bag = store.get(Bag('testone'))
-    assert len(list(store.list_bag_tiddlers(bag))) == 18
+    assert len(list(store.list_bag_tiddlers(bag))) == 19
 
 def test_import_one_tiddler():
     import_one('testone', 'test/samples/alpha/plugins/bplugin.js', store)
 
     bag = store.get(Bag('testone'))
-    assert len(list(store.list_bag_tiddlers(bag))) == 18 # bplugin already in store
+    assert len(list(store.list_bag_tiddlers(bag))) == 19 # bplugin already in store
 
     tiddler = store.get(Tiddler('bplugin', 'testone'))
     assert tiddler.type == 'text/javascript'
@@ -80,3 +80,11 @@ def test_import_one_css_meta():
     assert tiddler.title == 'fnord.css'
     assert tiddler.type == 'text/css'
     assert tiddler.tags == ['alpha', 'beta']
+
+def test_import_one_css_type():
+    import_one('testone', 'https://github.com/necolas/normalize.css/raw/master/normalize.css text/css', store)
+    tiddler = store.get(Tiddler('normalize.css', 'testone'))
+
+    assert tiddler.title == 'normalize.css'
+    assert tiddler.type == 'text/css'
+    assert tiddler.tags == []
