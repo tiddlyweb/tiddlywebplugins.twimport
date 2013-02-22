@@ -12,7 +12,7 @@ config = {
 
 twimport has two primary purposes:
 
-* Using the `twanager twimport`" command to import content into a
+* Using the `twanager twimport` command to import content into a
   running [instance](http://tiddlyweb.tiddlyspace.com/instance).
 * Using the functionality in the plugin to help build instance
   packages (e.g [tiddlywebwiki](https://github.com/tiddlyweb/tiddlywebwiki)
@@ -31,7 +31,7 @@ tiddler: <uri> [mime type]
 
 The mime type option is provided to allow setting the mime type
 of the stored tiddler. If no type is provided the system will
-attempt to determine the mime based on HTTP response headers 
+attempt to determine the type based on HTTP response headers 
 or by guessing from the file extension.
 
 If a tiddler uri ends in `.js` it will be processed as a
