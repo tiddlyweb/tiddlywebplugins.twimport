@@ -33,7 +33,7 @@ setup(
     classifiers = CLASSIFIERS,
     platforms = 'Posix; MacOS X; Windows',
     install_requires = ['setuptools',
-        'tiddlyweb',
+        'tiddlyweb>=2.0.0',
         'tiddlywebplugins.utils',
         'html5lib'],
     zip_safe = False
