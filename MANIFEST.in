@@ -1,2 +1,2 @@
 recursive-include test *
-include README Makefile
+include README Makefile LICENSE

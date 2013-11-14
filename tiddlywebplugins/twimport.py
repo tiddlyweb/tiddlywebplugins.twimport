@@ -24,7 +24,7 @@ file path, or a remote URI and have an optional mime type:
 
 The mime type option is provided to allow setting the mime type
 of the stored tiddler. If no type is provided the system will
-attempt to determine the mime based on HTTP response headers 
+attempt to determine the mime based on HTTP response headers
 or by guessing from the file extension.
 
 If a tiddler uri ends in '.js' it will be processed as a
