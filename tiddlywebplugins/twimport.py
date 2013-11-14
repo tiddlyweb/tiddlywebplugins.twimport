@@ -40,9 +40,14 @@ file.
 """
 
 import os
-import urllib
-import urllib2
-import urlparse
+
+try:
+    from urllib2 import urlopen, URLError, HTTPError
+    from urllib import splittype
+    from urlparse import urljoin, urlparse, urlunparse
+except ImportError as exc:
+    from urllib.request import urlopen, URLError, HTTPError
+    from urllib.parse import splittype, urljoin, urlparse, urlunparse
 
 from html5lib import HTMLParser, treebuilders
 
@@ -50,6 +55,8 @@ from tiddlyweb.model.tiddler import Tiddler, string_to_tags_list
 from tiddlyweb.serializer import Serializer
 from tiddlyweb.manage import make_command
 from tiddlyweb.util import pseudo_binary
+
+from tiddlyweb.fixups import unquote, quote
 
 from tiddlywebplugins.utils import get_store
 
@@ -189,7 +196,7 @@ def from_plugin(uri, handle):
     meta_uri = '%s.meta' % uri
     try:
         meta_content = _get_url(meta_uri)
-    except (urllib2.HTTPError, urllib2.URLError, IOError, OSError):
+    except (HTTPError, URLError, IOError, OSError):
         meta_content = 'title: %s\ntags: %s\n' % (default_title, default_tags)
     try:
         title = [line for line in meta_content.split('\n')
@@ -220,14 +227,14 @@ def from_special(uri, handle, mime=None):
     if mime:
         content_type = mime
     else:
-        content_type = handle.headers.type
+        content_type = handle.headers['content-type'].split(';')[0]
     data = handle.read()
 
     meta_uri = '%s.meta' % uri
     try:
         meta_content = _get_url(meta_uri)
         tiddler = _from_text(title, meta_content + '\n\n')
-    except (urllib2.HTTPError, urllib2.URLError, IOError, OSError):
+    except (HTTPError, URLError, IOError, OSError):
         tiddler = Tiddler(title)
 
     if not tiddler.type and content_type:
@@ -283,9 +290,7 @@ def _get_title_from_uri(uri):
     """
     title = uri.split('/')[-1]
     title = _strip_extension(title)
-    title = urllib.unquote(title)
-    if not type(title) == unicode:
-        title = unicode(title, 'utf-8')
+    title = unquote(title)
     return title
 
 
@@ -304,6 +309,8 @@ def _strip_extension(title):
 def _expand_recipe(content, url=''):
     """
     Expand a recipe into a list of usable URLs.
+
+    Content is a string, potentially with URL quoted strings.
     """
     urls = []
     for line in content.splitlines():
@@ -313,8 +320,6 @@ def _expand_recipe(content, url=''):
         except ValueError:
             continue  # blank line in recipe
         if target_type in ACCEPTED_RECIPE_TYPES:
-            if isinstance(target, unicode):
-                target = target.encode('utf-8')
             target = target.lstrip().rstrip()
             # translate well-known variables
             for name in COOK_VARIABLES:
@@ -322,11 +327,11 @@ def _expand_recipe(content, url=''):
             # Check to see if the target is a URL (has a scheme)
             # if not we want to join it to the current url before
             # carrying on.
-            scheme, _ = urllib2.splittype(target)
+            scheme, _ = splittype(target)
             if not scheme:
                 if not '%' in target:
-                    target = urllib.quote(target)
-                target = urlparse.urljoin(url, target)
+                    target = quote(target)
+                target = urljoin(url, target)
             if target_type == 'recipe':
                 urls.extend(recipe_to_urls(target))
             else:
@@ -338,7 +343,7 @@ def _get_url(url):
     """
     Load a URL and decode it to unicode.
     """
-    content = urllib2.urlopen(url).read().decode('utf-8', 'replace')
+    content = urlopen(url).read().decode('utf-8', 'replace')
     return content.replace('\r', '')
 
 
@@ -378,7 +383,7 @@ def _get_tiddler_from_div(node):
     for attr, value in node.attributes.items():
         data = value
         if data and attr != 'tags':
-            if attr in (['modifier', 'created', 'modified']):
+            if attr in (['creator', 'modifier', 'created', 'modified']):
                 tiddler.__setattr__(attr, data)
             elif (attr not in ['title', 'changecount'] and
                     not attr.startswith('server.')):
@@ -398,20 +403,20 @@ def get_url_handle(url):
     try:
         try:
             try:
-                handle = urllib2.urlopen(url)
-            except (urllib2.URLError, OSError):
+                handle = urlopen(url)
+            except (URLError, OSError):
                 (scheme, netloc, path, params, query,
-                        fragment) = urlparse.urlparse(url)
-                path = urllib.quote(path)
-                newurl = urlparse.urlunparse((scheme, netloc, path,
+                        fragment) = urlparse(url)
+                path = quote(path)
+                newurl = urlunparse((scheme, netloc, path,
                     params, query, fragment))
-                handle = urllib2.urlopen(newurl)
+                handle = urlopen(newurl)
         except ValueError:
             # If ValueError happens again we want it to raise
             url = 'file://' + os.path.abspath(url)
-            handle = urllib2.urlopen(url)
+            handle = urlopen(url)
         return url, handle
-    except urllib2.HTTPError, exc:
+    except HTTPError as exc:
         raise ValueError('%s: %s' % (exc, url))
 
 
@@ -427,5 +432,5 @@ def _parse_fragment(fragment):
     """
     Turn a TiddlyWiki permaview into a list of tiddlers.
     """
-    fragment = urllib.unquote(fragment).decode('UTF-8')
+    fragment = unquote(fragment)
     return string_to_tags_list(fragment)

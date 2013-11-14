@@ -142,29 +142,8 @@ tiddler: %7Especial/thing.tid
     assert urls == ['http://example.com/%7Emonkey/pirate.tiddler', 'http://example.com/%7Especial/thing.tid']
 
 
-def test_handle_recipe_utf8():
-    """
-    handle_recipe takes a base url and some utf-8 encoded
-    content that is a recipe. It returns a list of urls.
-    """
-    urls = _expand_recipe("""tiddler: monkey/%s/pirate.tiddler
-plugin: special/%s/thing.js
-""" % ('\xE2\x84\xA2', '\xE2\x84\xA2'), 'http://example.com/')
-    assert urls == ['http://example.com/monkey/%E2%84%A2/pirate.tiddler', 'http://example.com/special/%E2%84%A2/thing.js']
-
-
-def test_handle_recipe_from_unicode():
-    recipe = u"""tiddler: monkey/%s/pirate.tiddler
-tiddler: special/%s/thing.tid
-""" % (u'\u2122', u'\u2122')
-    recipe = recipe.encode('utf-8')
-    urls = _expand_recipe(recipe, 'http://example.com/')
-    assert urls == ['http://example.com/monkey/%E2%84%A2/pirate.tiddler', 'http://example.com/special/%E2%84%A2/thing.tid']
-
-
 def test_handle_recipe_plugin():
     recipe = u'plugin: monkey/pirate.tid'
-    recipe = recipe.encode('utf-8')
     urls = _expand_recipe(recipe, 'http://example.com/')
     assert urls == ['http://example.com/monkey/pirate.tid']
 
