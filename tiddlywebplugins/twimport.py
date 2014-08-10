@@ -240,7 +240,7 @@ def from_special(uri, handle, mime=None):
     if not tiddler.type and content_type:
         tiddler.type = content_type
 
-    if pseudo_binary(content_type):
+    if pseudo_binary(tiddler.type):
         data = data.decode('utf-8', 'ignore')
 
     tiddler.text = data
